@@ -6,9 +6,6 @@ import 'dart:convert';
 const request= "https://api.hgbrasil.com/finance?key=7ca89481";
 
 void main() async{
-
-  print(await getData());
-
   runApp(MaterialApp(
     home: Home(),
   ));
@@ -31,9 +28,36 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.blue,
         appBar: AppBar(
           title: Text("Conversor"),
-          backgroundColor: Colors.blue[100],
+          backgroundColor: Colors.blue[800],
           centerTitle: true,
-        )
+        ),
+        body: FutureBuilder<Map>(
+          future: getData(),
+          builder: (context, snapshot){
+            switch (snapshot.connectionState){
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+                return _buildMessage("Carregando Dados...", Colors.amber);
+              default:
+                if (snapshot.hasError) {
+                  return _buildMessage("Erro ao Carregar Dados", Colors.red[200]);
+                } else {
+                  return _buildMessage("Dados Carregados com Sucesso", Colors.white);
+                }
+            }
+          }
+        ),
     );
-  }
-}
+  }//build
+
+  Widget _buildMessage(String text, Color color){
+    return Center(
+      child: Text(
+        text,
+        style: TextStyle(color: color, fontSize: 25.0),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }//_buildMessage
+}//HomeState
+
